@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
+from decimal import Decimal
+from django import forms
 from django.conf import settings as django_settings
 import pytz
 from dateutil import rrule
 
 from django.contrib.contenttypes import generic
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
@@ -16,6 +19,9 @@ from schedule.conf import settings
 from schedule.models.rules import Rule
 from schedule.models.calendars import Calendar
 from schedule.utils import OccurrenceReplacer
+
+from apps.tags.models import Tag
+from apps.locations.models import Location
 
 
 class EventManager(models.Manager):
@@ -41,6 +47,10 @@ class Event(models.Model):
     end_recurring_period = models.DateTimeField(_("end recurring period"), null=True, blank=True,
                                                 help_text=_("This date is ignored for one time only events."))
     calendar = models.ForeignKey(Calendar, null=True, blank=True, verbose_name=_("calendar"))
+    admission_price = models.DecimalField('Admission Price', default=0, max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal('0.00'))])
+    tags = models.ManyToManyField(Tag, blank=True, verbose_name=_("Tags"))
+    locations = models.ForeignKey(Location, verbose_name=_("Location"), null=True)
+
     objects = EventManager()
 
     class Meta:
