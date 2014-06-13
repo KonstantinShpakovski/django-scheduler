@@ -68,6 +68,7 @@ class Event(models.Model):
     tags = models.ManyToManyField(Tag, blank=True, verbose_name=_("Tags"))
     locations = models.ForeignKey(Location, verbose_name=_("Location"))
     category = models.ForeignKey('schedule.Category', verbose_name=_("Category"))
+    sponsor_text = models.TextField(_("sponsor text"), blank=True)
 
     objects = EventManager()
 
