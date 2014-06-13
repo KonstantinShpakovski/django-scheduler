@@ -29,6 +29,23 @@ class EventManager(models.Manager):
         return EventRelation.objects.get_events_for_object(content_object, distinction, inherit)
 
 
+
+class Category(models.Model):
+    '''
+    This model stores meta data for a category of event.
+    '''
+    name = models.CharField(_('category'),max_length=255, unique=True)
+
+    class Meta:
+        verbose_name = 'Category'
+        verbose_name_plural = 'Categories'
+        app_label = "schedule"
+        ordering = ('name',)
+
+    def __unicode__(self):
+            return u'{}'.format(self.name)
+
+
 class Event(models.Model):
     '''
     This model stores meta data for a date.  You can relate this data to many
@@ -49,7 +66,8 @@ class Event(models.Model):
     calendar = models.ForeignKey(Calendar, null=True, blank=True, verbose_name=_("calendar"))
     admission_price = models.DecimalField('Admission Price', default=0, max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal('0.00'))])
     tags = models.ManyToManyField(Tag, blank=True, verbose_name=_("Tags"))
-    locations = models.ForeignKey(Location, verbose_name=_("Location"), null=True)
+    locations = models.ForeignKey(Location, verbose_name=_("Location"))
+    category = models.ForeignKey('schedule.Category', verbose_name=_("Category"))
 
     objects = EventManager()
 
